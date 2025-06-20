@@ -99,10 +99,6 @@ function App() {
     utterance.rate = 1.1;
     utterance.volume = 2;
 
-    utterance.onstart = (text) => {
-      console.log(`✅ We have started uttering this speech: ${text}`);
-    };
-
     utterance.onstart = () => {
       console.log("✅ Speech started!");
     };
