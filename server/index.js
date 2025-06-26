@@ -12,10 +12,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app.get("/chat", async (req, res) => {
   const { transcripts } = req.body;
   console.log("Transcripts:", transcripts);

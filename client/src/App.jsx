@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { FaMicrophone } from "react-icons/fa";
+import axios from "axios";
 
 function App() {
   const uiLoaded = useRef(false);
@@ -8,19 +10,11 @@ function App() {
   const [transcript, setTranscript] = useState("Transcirpt here");
   const [error, setError] = useState("No error");
 
-  const botText = "Hi myself Luffy... How may I assist you?!";
+  const [messages, setMessages] = useState([
+    { from: "interviewee", text: "Hi myself Luffy! How may I assist you?" },
+  ]);
 
-  useEffect(() => {
-    const loadVoices = () => {
-      const allVoices = window.speechSynthesis.getVoices();
-      setVoices(allVoices);
-      console.log(allVoices);
-    };
-    loadVoices();
-
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-  }, []);
-
+  // STT (Speech to Text)
   useEffect(() => {
     if (uiLoaded.current === false) {
       const SpeechRecognition =
@@ -70,9 +64,14 @@ function App() {
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setTranscript("You said: " + transcript + ".");
-        console.log("User", transcript);
+        const userTranscript = event.results[0][0].transcript;
+
+        setMessages((prev) => [
+          ...prev,
+          { from: "user", text: userTranscript },
+        ]);
+
+        setMessages((prev) => [...prev, { from: "interviewee", text: "" }]);
       };
 
       recognition.onerror = (event) => {
@@ -86,6 +85,19 @@ function App() {
     uiLoaded.current = true;
   }, [uiLoaded]);
 
+  // Loading the voices from here
+  useEffect(() => {
+    const loadVoices = () => {
+      const allVoices = window.speechSynthesis.getVoices();
+      setVoices(allVoices);
+      // console.log(allVoices);
+    };
+    loadVoices();
+
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }, []);
+
+  // TTS (Text to Speech)
   const speakBot = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = speechSynthesis.getVoices();
@@ -109,6 +121,11 @@ function App() {
       if (speechRecognition.current) {
         speechRecognition.current?.start();
         console.log("🎙️ Recognition Started");
+
+        // Delay for the bot
+        setTimeout(() => {
+          speakBot();
+        }, 2000);
       } else {
         console.log("Speech Recognition not initialized");
       }
@@ -123,20 +140,48 @@ function App() {
   };
 
   const startInterview = () => {
+    const botText = "Hi myself Luffy! How may I assist you?";
     speakBot(botText);
   };
 
   return (
-    <div className="h-screen w-full bg-cyan-950 p-10">
-      <p className="text-white"> {transcript} </p>
-      <p className="text-white"> {isListening.toString()} </p>
-      <p className="text-red-700"> {error} </p>
-      <button
-        className="px-4 py-2 bg-cyan-600 rounded-md font-bold"
-        onClick={() => startInterview()}
-      >
-        Start Interview
-      </button>
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+      {/* Header */}
+      <header className="p-4 bg-gray-800 text-center text-xl font-bold shadow">
+        Interview Bot 🎙️
+      </header>
+
+      {/* Chat Area */}
+      <main className="flex-1 p-6 overflow-y-auto space-y-4">
+        {/* Bot Message */}
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`flex ${
+              msg.from === "interviewee" ? "items-start" : "justify-end"
+            }`}
+          >
+            <div
+              className={`p-3 rounded-lg max-w-md ${
+                msg.from === "user" ? "bg-blue-600" : "bg-green-600"
+              }`}
+            >
+              {msg.text}
+            </div>
+          </div>
+        ))}
+      </main>
+
+      {/* Footer / Mic Control */}
+      <footer className="p-4 bg-gray-800 flex items-center justify-between">
+        <span className="text-sm text-gray-300">Tap mic to speak</span>
+        <button
+          className="p-3 bg-blue-500 rounded-full hover:bg-blue-600"
+          onClick={() => startInterview()}
+        >
+          <FaMicrophone className="text-white text-xl" />
+        </button>
+      </footer>
     </div>
   );
 }
