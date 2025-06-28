@@ -7,12 +7,18 @@ function App() {
   const speechRecognition = useRef(null);
   const [voices, setVoices] = useState([]);
   const [isListening, setIsListening] = useState("Mic Testing");
-  const [transcript, setTranscript] = useState("Transcirpt here");
   const [error, setError] = useState("No error");
 
   const [messages, setMessages] = useState([
-    { from: "interviewee", text: "Hi myself Luffy! How may I assist you?" },
+    { from: "bot", text: "Hi myself Luffy! How may I assist you?" },
   ]);
+
+  const getAiResponse = async (userMessage) => {
+    const response = await axios.post("http://localhost:3000/chat", {
+      transcripts: userMessage,
+    });
+    return response.data.message;
+  };
 
   // STT (Speech to Text)
   useEffect(() => {
@@ -63,15 +69,13 @@ function App() {
         console.log("🛑 Recognition ended");
       };
 
-      recognition.onresult = (event) => {
+      recognition.onresult = async (event) => {
         const userTranscript = event.results[0][0].transcript;
 
         setMessages((prev) => [
           ...prev,
           { from: "user", text: userTranscript },
         ]);
-
-        setMessages((prev) => [...prev, { from: "interviewee", text: "" }]);
       };
 
       recognition.onerror = (event) => {
@@ -121,11 +125,6 @@ function App() {
       if (speechRecognition.current) {
         speechRecognition.current?.start();
         console.log("🎙️ Recognition Started");
-
-        // Delay for the bot
-        setTimeout(() => {
-          speakBot();
-        }, 2000);
       } else {
         console.log("Speech Recognition not initialized");
       }
@@ -139,8 +138,8 @@ function App() {
     speechSynthesis.speak(utterance);
   };
 
-  const startInterview = () => {
-    const botText = "Hi myself Luffy! How may I assist you?";
+  const startInterview = async () => {
+    const botText = await getAiResponse(["name: Ritesh"]);
     speakBot(botText);
   };
 
@@ -158,7 +157,7 @@ function App() {
           <div
             key={idx}
             className={`flex ${
-              msg.from === "interviewee" ? "items-start" : "justify-end"
+              msg.from === "bot" ? "items-start" : "justify-end"
             }`}
           >
             <div
@@ -174,10 +173,10 @@ function App() {
 
       {/* Footer / Mic Control */}
       <footer className="p-4 bg-gray-800 flex items-center justify-between">
-        <span className="text-sm text-gray-300">Tap mic to speak</span>
+        <span className="text-sm text-gray-300">Tap mic to start</span>
         <button
           className="p-3 bg-blue-500 rounded-full hover:bg-blue-600"
-          onClick={() => startInterview()}
+          onClick={async () => await startInterview()}
         >
           <FaMicrophone className="text-white text-xl" />
         </button>
