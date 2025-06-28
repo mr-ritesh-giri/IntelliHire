@@ -9,12 +9,10 @@ function App() {
   const [isListening, setIsListening] = useState("Mic Testing");
   const [error, setError] = useState("No error");
 
-  const [messages, setMessages] = useState([
-    { from: "bot", text: "Hi myself Luffy! How may I assist you?" },
-  ]);
+  const [messages, setMessages] = useState([{ from: "user", text: "Ritesh" }]);
 
   const getAiResponse = async (userMessage) => {
-    const response = await axios.post("http://localhost:3000/chat", {
+    const response = await axios.post("/chat", {
       transcripts: userMessage,
     });
     return response.data.message;
@@ -72,9 +70,20 @@ function App() {
       recognition.onresult = async (event) => {
         const userTranscript = event.results[0][0].transcript;
 
+        const newTranscripts = [
+          ...messages,
+          { from: "user", text: userTranscript },
+        ];
+
+        const response = await getAiResponse(newTranscripts);
+        console.log(response);
+
+        speakBot(response);
+
         setMessages((prev) => [
           ...prev,
           { from: "user", text: userTranscript },
+          { from: "bot", text: response },
         ]);
       };
 
@@ -139,8 +148,14 @@ function App() {
   };
 
   const startInterview = async () => {
-    const botText = await getAiResponse(["name: Ritesh"]);
-    speakBot(botText);
+    // alert("Alert");
+    try {
+      const botText = await getAiResponse([{ from: "user", text: "Ritesh" }]);
+      setMessages((prev) => [...prev, { from: "bot", text: botText }]);
+      speakBot(botText);
+    } catch (error) {
+      alert(error.toString());
+    }
   };
 
   return (
