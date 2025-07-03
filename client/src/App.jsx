@@ -5,11 +5,9 @@ import axios from "axios";
 function App() {
   const uiLoaded = useRef(false);
   const speechRecognition = useRef(null);
-  const [voices, setVoices] = useState([]);
-  const [isListening, setIsListening] = useState("Mic Testing");
   const [error, setError] = useState("No error");
 
-  const [messages, setMessages] = useState([{ from: "user", text: "Ritesh" }]);
+  const [messages, setMessages] = useState([]);
 
   const getAiResponse = async (userMessage) => {
     const response = await axios.post("/chat", {
@@ -40,51 +38,43 @@ function App() {
       recognition.lang = "en-IN";
 
       recognition.onstart = () => {
-        setIsListening((prev) => {
-          return prev + " 🎤  Listening Started";
-        });
         console.log("🎤 Listening started");
       };
 
       recognition.onspeechstart = () => {
-        setIsListening((prev) => {
-          return prev + " 🗣️ User started speaking";
-        });
         console.log("🗣️ User started speaking");
       };
 
       recognition.onspeechend = () => {
-        setIsListening((prev) => {
-          return prev + " 🔇 User stopped speaking";
-        });
         console.log("🔇 User stopped speaking");
       };
 
       recognition.onend = () => {
-        setIsListening((prev) => {
-          return prev + " 🛑 Recognition ended";
-        });
         console.log("🛑 Recognition ended");
       };
 
       recognition.onresult = async (event) => {
         const userTranscript = event.results[0][0].transcript;
 
-        const newTranscripts = [
-          ...messages,
-          { from: "user", text: userTranscript },
-        ];
+        if (userTranscript && userTranscript.trim() !== "") {
+          const newTranscripts = [
+            ...messages,
+            { from: "user", text: userTranscript },
+          ];
 
-        const response = await getAiResponse(newTranscripts);
-        console.log(response);
+          const response = await getAiResponse(newTranscripts);
+          // console.log(response);
 
-        speakBot(response);
+          SpeakBot(response);
 
-        setMessages((prev) => [
-          ...prev,
-          { from: "user", text: userTranscript },
-          { from: "bot", text: response },
-        ]);
+          setMessages((prev) => [
+            ...prev,
+            { from: "user", text: userTranscript },
+            { from: "bot", text: response },
+          ]);
+        } else {
+          setError("User didn't speak.");
+        }
       };
 
       recognition.onerror = (event) => {
@@ -101,8 +91,8 @@ function App() {
   // Loading the voices from here
   useEffect(() => {
     const loadVoices = () => {
-      const allVoices = window.speechSynthesis.getVoices();
-      setVoices(allVoices);
+      // const allVoices =
+      window.speechSynthesis.getVoices();
       // console.log(allVoices);
     };
     loadVoices();
@@ -111,7 +101,7 @@ function App() {
   }, []);
 
   // TTS (Text to Speech)
-  const speakBot = (text) => {
+  const SpeakBot = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = speechSynthesis.getVoices();
 
@@ -148,25 +138,25 @@ function App() {
   };
 
   const startInterview = async () => {
-    // alert("Alert");
     try {
-      const botText = await getAiResponse([{ from: "user", text: "Ritesh" }]);
+      const botText = await getAiResponse([{ from: "user", text: "" }]);
       setMessages((prev) => [...prev, { from: "bot", text: botText }]);
-      speakBot(botText);
+      SpeakBot(botText);
     } catch (error) {
+      setError(error.message);
       alert(error.toString());
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="relative min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
-      <header className="p-4 bg-gray-800 text-center text-xl font-bold shadow">
+      <header className="fixed top-0 w-full z-50 p-4 bg-gray-800 text-center text-xl font-bold shadow">
         Interview Bot 🎙️
       </header>
 
       {/* Chat Area */}
-      <main className="flex-1 p-6 overflow-y-auto space-y-4">
+      <main className="flex-1 pt-16 p-6 overflow-y-auto space-y-4">
         {/* Bot Message */}
         {messages.map((msg, idx) => (
           <div
@@ -189,6 +179,7 @@ function App() {
       {/* Footer / Mic Control */}
       <footer className="p-4 bg-gray-800 flex items-center justify-between">
         <span className="text-sm text-gray-300">Tap mic to start</span>
+        <p className="">{error.message}</p>
         <button
           className="p-3 bg-blue-500 rounded-full hover:bg-blue-600"
           onClick={async () => await startInterview()}
