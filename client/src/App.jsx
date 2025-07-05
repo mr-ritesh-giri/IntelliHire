@@ -149,15 +149,14 @@ function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="relative min-h-screen bg-gray-400 text-white flex flex-col">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 p-4 bg-gray-800 text-center text-xl font-bold shadow">
+      <header className="fixed top-0 w-full z-50 p-4 bg-[#303950] text-center text-2xl font-semibold shadow-md">
         Interview Bot 🎙️
       </header>
 
       {/* Chat Area */}
-      <main className="flex-1 pt-16 p-6 overflow-y-auto space-y-4">
-        {/* Bot Message */}
+      <main className="flex-1 pt-20 p-6 overflow-y-auto space-y-4">
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -166,8 +165,8 @@ function App() {
             }`}
           >
             <div
-              className={`p-3 rounded-lg max-w-md ${
-                msg.from === "user" ? "bg-blue-600" : "bg-green-600"
+              className={`p-3 rounded-lg max-w-md text-base leading-relaxed ${
+                msg.from === "user" ? "bg-blue-500" : "bg-[#303950]"
               }`}
             >
               {msg.text}
@@ -177,14 +176,12 @@ function App() {
       </main>
 
       {/* Footer / Mic Control */}
-      <footer className="p-4 bg-gray-800 flex items-center justify-between">
-        <span className="text-sm text-gray-300">Tap mic to start</span>
-        <p className="">{error.message}</p>
+      <footer className="fixed bottom-[2%] left-1/2 transform -translate-x-1/2 flex justify-center">
         <button
-          className="p-3 bg-blue-500 rounded-full hover:bg-blue-600"
+          className="p-6 bg-[#303950] rounded-full transition-colors"
           onClick={async () => await startInterview()}
         >
-          <FaMicrophone className="text-white text-xl" />
+          <FaMicrophone className="text-white text-4xl" />
         </button>
       </footer>
     </div>
@@ -192,3 +189,10 @@ function App() {
 }
 
 export default App;
+
+{
+  /* <button
+  className="p-3 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
+  onClick={async () => await startInterview()}
+></button>; */
+}
