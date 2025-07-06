@@ -5,7 +5,7 @@ import axios from "axios";
 function App() {
   const uiLoaded = useRef(false);
   const speechRecognition = useRef(null);
-  const [error, setError] = useState("No error");
+  const [error, setError] = useState("");
 
   const [messages, setMessages] = useState([]);
 
@@ -63,7 +63,6 @@ function App() {
           ];
 
           const response = await getAiResponse(newTranscripts);
-          // console.log(response);
 
           SpeakBot(response);
 
@@ -139,6 +138,7 @@ function App() {
 
   const startInterview = async () => {
     try {
+      setMessages([]);
       const botText = await getAiResponse([{ from: "user", text: "" }]);
       setMessages((prev) => [...prev, { from: "bot", text: botText }]);
       SpeakBot(botText);
@@ -176,7 +176,8 @@ function App() {
       </main>
 
       {/* Footer / Mic Control */}
-      <footer className="fixed bottom-[2%] left-1/2 transform -translate-x-1/2 flex justify-center">
+      <footer className="fixed bottom-[2%] left-1/2 transform -translate-x-1/2 flex justify-center flex-col items-center">
+        {error && <div className="text-red-700">Error: {error} </div>}
         <button
           className="p-6 bg-[#303950] rounded-full transition-colors"
           onClick={async () => await startInterview()}
@@ -189,10 +190,3 @@ function App() {
 }
 
 export default App;
-
-{
-  /* <button
-  className="p-3 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
-  onClick={async () => await startInterview()}
-></button>; */
-}

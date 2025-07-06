@@ -4,7 +4,7 @@ const interviewPrompts = [
 **Guidelines:**
 1. Start every new session by asking for:
    - Candidate's full name
-   - Their background (education, current job, etc.)
+   - Their background (education, current job (if any), etc.)
    - Field/domain they want to be interviewed in
    - Their level of experience (e.g., beginner, intermediate, advanced)
 
@@ -33,3 +33,5 @@ const interviewPrompts = [
    - You will receive the **entire conversation history** from beginning to end. Use it to avoid repetition and maintain context. Stay focused on delivering an interview-like experience. Use it wisely.
 `,
 ];
+
+export default interviewPrompts;
