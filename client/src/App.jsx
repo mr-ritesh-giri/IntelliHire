@@ -5,9 +5,9 @@ function App() {
   return (
     <>
       {/* ChatAvatar Sidebar */}
-      <main className="bg-black h-screen w-full flex">
+      <main className="bg-purple-700 h-screen w-full flex">
         <ChatAvatarSidebar />
-        <section className="bg-purple-700 w-2/3">
+        <section className="bg-purple-700 md:w-2/3">
           {/* Chat Section */}
           <VoiceAssistant />
         </section>
