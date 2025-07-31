@@ -29,9 +29,12 @@ function VoiceAssistant() {
   };
 
   const getAiResponse = async (userMessage) => {
-    const response = await axios.post("/chat", {
-      transcripts: userMessage,
-    });
+    const response = await axios.post(
+      "https://intellihire-8qmi.onrender.com/chat",
+      {
+        transcripts: userMessage,
+      }
+    );
     return response.data.message;
   };
 
@@ -246,9 +249,7 @@ function VoiceAssistant() {
       </main>
 
       {/* Footer / Mic Control */}
-      <footer
-        className="fixed left-0 w-full flex justify-center items-center bottom-[1%] md:right-[29.6%] md:left-auto md:w-auto md:flex-col md:transform md:-translate-x-1/2"
-      >
+      <footer className="fixed left-0 w-full flex justify-center items-center bottom-[1%] md:right-[29.6%] md:left-auto md:w-auto md:flex-col md:transform md:-translate-x-1/2">
         <button
           className="w-16 h-16 bg-gray-950 hover:bg-gray-900 rounded-full transition-colors"
           onClick={async () => await startInterview()}
