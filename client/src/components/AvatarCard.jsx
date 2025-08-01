@@ -4,7 +4,7 @@ const AvatarCard = ({ src, alt, isSpeaking }) => {
       {isSpeaking && (
         <div className="absolute z-20">
           <video
-            src="public/equalizerCircle.webm"
+            src="/equalizerCircle.webm"
             autoPlay
             loop
             muted

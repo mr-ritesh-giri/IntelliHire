@@ -4,7 +4,7 @@ const AssistantIndicator = ({ type }) => {
   if (type === "bot") {
     return (
       <video
-        src="public/speakerOn.webm"
+        src="/speakerOn.webm"
         autoPlay
         loop
         muted
@@ -17,7 +17,7 @@ const AssistantIndicator = ({ type }) => {
   if (type === "user") {
     return (
       <video
-        src="public/micOn.webm"
+        src="/micOn.webm"
         autoPlay
         loop
         muted
