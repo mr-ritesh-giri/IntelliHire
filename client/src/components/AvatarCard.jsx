@@ -13,7 +13,7 @@ const AvatarCard = ({ src, alt, isSpeaking }) => {
           />
         </div>
       )}
-      <div className="h-64 w-64 z-10 rounded-full border-2 border-purple-700 border-dashed transition-all duration-300">
+      <div className="w-60 h-60 lg:h-80 lg:w-80 xl:h-96 xl:w-96 z-10 rounded-full border-2 border-purple-700 border-dashed transition-all duration-300">
         <img src={src} alt={alt} className="w-full h-full rounded-full" />
       </div>
     </div>

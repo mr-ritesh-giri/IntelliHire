@@ -18,13 +18,13 @@ function VoiceAssistant() {
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
 
   const StartSpeech = () => {
-    console.log("Starting Speech Called");
+    // console.log("Starting Speech Called");
 
     if (speechRecognition.current) {
       speechRecognition.current?.start();
-      console.log("🎙️ Recognition Started");
+      // console.log("🎙️ Recognition Started");
     } else {
-      console.log("Speech Recognition not initialized");
+      // console.log("Speech Recognition not initialized");
     }
   };
 
@@ -59,7 +59,7 @@ function VoiceAssistant() {
     if (uiLoaded.current === false) {
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
-      console.log(SpeechRecognition);
+      // console.log(SpeechRecognition);
 
       if (!SpeechRecognition) {
         console.error(
@@ -78,26 +78,26 @@ function VoiceAssistant() {
       let didSpeak = false;
 
       recognition.onstart = () => {
-        console.log("🎤 Listening started");
+        // console.log("🎤 Listening started");
         setSpeaker("user");
         didSpeak = false;
       };
 
       recognition.onspeechstart = () => {
-        console.log("🗣️ User started speaking");
+        // console.log("🗣️ User started speaking");
         didSpeak = true;
       };
 
       recognition.onspeechend = () => {
-        console.log("🔇 User stopped speaking");
+        // console.log("🔇 User stopped speaking");
       };
 
       recognition.onend = () => {
-        console.log("🛑 Recognition ended");
+        // console.log("🛑 Recognition ended");
         setSpeaker("");
 
         if (!didSpeak) {
-          console.log("User did not speak — restarting");
+          // console.log("User did not speak — restarting");
           setTimeout(() => {
             StartSpeech();
           }, 2000);
@@ -113,7 +113,7 @@ function VoiceAssistant() {
             { from: "user", text: userTranscript },
           ]);
         } else {
-          console.log("User didn't speak.");
+          // console.log("User didn't speak.");
           setTimeout(() => {
             StartSpeech();
           }, 2000);
@@ -146,7 +146,7 @@ function VoiceAssistant() {
 
   useEffect(() => {
     if (botResponse) {
-      console.log(botResponse);
+      // console.log(botResponse);
       SpeakBot(botResponse);
       setMessages((prev) => [
         ...prev,
@@ -162,7 +162,7 @@ function VoiceAssistant() {
   useEffect(() => {
     const loadVoices = () => {
       const allVoices = window.speechSynthesis.getVoices();
-      console.log(allVoices);
+      // console.log(allVoices);
     };
     loadVoices();
 
@@ -184,12 +184,12 @@ function VoiceAssistant() {
     utterance.volume = 1; // Max safe volume (0–1)
 
     utterance.onstart = () => {
-      console.log("✅ Speech started!");
+      // console.log("✅ Speech started!");
       setSpeaker("bot");
     };
 
     utterance.onend = () => {
-      console.log("✅ Speech finished!");
+      // console.log("✅ Speech finished!");
       setSpeaker("");
       StartSpeech();
     };
@@ -218,7 +218,7 @@ function VoiceAssistant() {
       className="overflow-auto relative h-screen bg-purple-700 text-white flex flex-col"
     >
       {/* Chat Area */}
-      <main className="flex-1 pt-6 px-6 pb-20 overflow-y-auto space-y-4">
+      <main className="flex-1 pt-3 md:pt-6 px-3 md:px-6 pb-20 overflow-y-auto space-y-4">
         {messages.length > 0 ? (
           messages.map(
             (msg, idx) =>
@@ -231,7 +231,7 @@ function VoiceAssistant() {
                   }`}
                 >
                   <div
-                    className={`p-3 rounded-lg max-w-md text-base leading-relaxed ${
+                    className={`p-3 rounded-lg max-w-lg text-lg md:text-xl leading-relaxed ${
                       msg.from === "user" ? "bg-blue-500" : "bg-gray-900"
                     }`}
                   >
@@ -241,7 +241,7 @@ function VoiceAssistant() {
               )
           )
         ) : (
-          <p className="text-center text-3xl mt-80 font-semibold text-gray-950">
+          <p className="flex justify-center items-center text-center h-full  text-3xl xl:text-4xl font-semibold text-gray-950">
             Let's sharpen those interview skills. Hit the mic to start talking!
             🎤
           </p>
@@ -251,7 +251,7 @@ function VoiceAssistant() {
       {/* Footer / Mic Control */}
       <footer className="fixed left-0 w-full flex justify-center items-center bottom-[1%] md:right-[29.6%] md:left-auto md:w-auto md:flex-col md:transform md:-translate-x-1/2">
         <button
-          className="w-16 h-16 bg-gray-950 hover:bg-gray-900 rounded-full transition-colors"
+          className="w-16 h-16 md:w-20 md:h-20 bg-gray-950 hover:bg-gray-900 rounded-full transition-colors"
           onClick={async () => await startInterview()}
         >
           <AssistantIndicator type={speaker} />
